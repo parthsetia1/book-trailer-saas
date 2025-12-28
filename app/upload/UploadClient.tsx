@@ -22,34 +22,41 @@ export default function UploadClient() {
 
   return (
     <div>
-      <h1 className="text-3xl font-bold">Upload Assets</h1>
+      <h1 className="text-3xl font-bold mb-6">Upload Images & Dialogues</h1>
 
-      <div className="mt-6">
+      {/* Dialogue Box */}
+      <div className="mb-6">
         <textarea
-          className="border p-2 w-full"
+          className="border p-3 w-full rounded-md"
           rows={4}
-          placeholder="Enter dialogue..."
+          placeholder="Type dialogue text..."
           value={dialogue}
           onChange={(e)=>setDialogue(e.target.value)}
         />
 
         <button
           onClick={addDialogue}
-          className="mt-2 bg-black text-white px-4 py-2 rounded"
+          className="mt-3 bg-blue-600 text-white px-5 py-2 rounded-md"
         >
           Add Dialogue
         </button>
       </div>
 
-      <div className="mt-6">
-        <input type="file" onChange={addImage} />
+      {/* Image Upload */}
+      <div className="mb-10">
+        <input
+          type="file"
+          onChange={addImage}
+          className="w-full border p-3 rounded-md"
+        />
       </div>
 
+      {/* Continue */}
       <button
         onClick={() => router.push(`/generate?project_id=${project_id}`)}
-        className="mt-6 bg-purple-600 text-white px-4 py-2 rounded"
+        className="bg-purple-600 text-white px-6 py-3 rounded-md"
       >
-        Generate Trailer →
+        Continue to Trailer Generation →
       </button>
     </div>
   );
