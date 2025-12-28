@@ -1,8 +1,9 @@
 export const dynamic = "force-dynamic";
 export const runtime = "edge";
 
-import GeneratePage from "./GenerateClient.js";
+import GenerateClient from "./GenerateClient";
+
 
 export default function Page() {
-  return <GeneratePage />;
+  return <GenerateClient />;
 }
