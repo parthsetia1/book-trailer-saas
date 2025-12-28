@@ -10,7 +10,7 @@ export default function Dashboard() {
   useEffect(() => {
     async function load() {
       const { data } = await supabase.from("projects").select("*").order("created_at", { ascending: false });
-      setProjects(data);
+      setProjects(data ?? []);
     }
     load();
   }, []);

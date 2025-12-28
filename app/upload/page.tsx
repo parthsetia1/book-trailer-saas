@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, ChangeEvent } from "react";
 import { uploadDialogue, uploadImage } from "@/lib/api";
 import { useSearchParams, useRouter } from "next/navigation";
 
@@ -16,8 +16,10 @@ export default function UploadPage() {
     setDialogue("");
   }
 
-  async function addImage(e) {
-    await uploadImage(project_id, e.target.files[0]);
+  async function addImage(e: ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    await uploadImage(project_id, file);
   }
 
   return (
