@@ -1,36 +1,44 @@
 "use client";
 
 import { useState } from "react";
-import { createProject } from "@/lib/api";
 import { useRouter } from "next/navigation";
+import { createProject } from "@/lib/api";
 
 export default function CreateClient() {
   const router = useRouter();
+
   const [title, setTitle] = useState("");
   const [duration, setDuration] = useState("60");
 
-  const user_id = "demo-user";
-
   async function submit() {
-    const res = await createProject(title, "AI Trailer", Number(duration), user_id);
+    if (!title.trim()) {
+      alert("Title required");
+      return;
+    }
 
-    // 🔥 Redirect to upload page
+    const res = await createProject(
+      title,
+      "AI Generated Book Trailer",
+      Number(duration),
+      "demo-user"
+    );
+
     router.push(`/upload?project_id=${res.project_id}`);
   }
 
   return (
     <div>
-      <h1 className="text-3xl font-bold mb-4">Create New Project</h1>
+      <h1 className="text-3xl font-bold mb-6">Create New Project</h1>
 
       <input
-        className="border p-3 w-full rounded-md"
+        className="border p-3 w-full rounded-md mb-4"
         placeholder="Project title..."
         value={title}
         onChange={(e) => setTitle(e.target.value)}
       />
 
       <select
-        className="border p-3 w-full mt-4 rounded-md"
+        className="border p-3 w-full rounded-md mb-6"
         value={duration}
         onChange={(e) => setDuration(e.target.value)}
       >
@@ -41,7 +49,7 @@ export default function CreateClient() {
 
       <button
         onClick={submit}
-        className="mt-6 bg-black text-white px-6 py-3 rounded-md"
+        className="bg-black hover:bg-gray-800 text-white px-6 py-3 rounded-md cursor-pointer"
       >
         Create
       </button>
