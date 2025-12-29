@@ -1,8 +1,8 @@
 export const dynamic = "force-dynamic";
 export const runtime = "edge";
 
-import ProjectClient from "./ProjectClient";
+import Project from "./ProjectClient";
 
-export default function Page() {
-  return <ProjectClient />;
+export default function Page({ params }: { params: { id: string } }) {
+  return <Project params={params} />;
 }

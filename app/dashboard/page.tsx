@@ -1,8 +1,8 @@
 export const dynamic = "force-dynamic";
 export const runtime = "edge";
 
-import DashboardClient from "./DashboardClient";
+import Dashboard from "./DashboardClient";
 
 export default function Page() {
-  return <DashboardClient />;
+  return <Dashboard />;
 }

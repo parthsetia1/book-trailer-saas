@@ -1,42 +1,83 @@
 "use client";
 
-import { supabase } from "@/lib/supabaseClient";
 import { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
+import { BACKEND_URL } from "../../../lib/config";
+import Navbar from "@/components/Navbar";
+import ImageUpload from "@/components/imageUpload";
+import DialogueInput from "@/components/DialogueInput";
+import VideoPlayer from "@/components/VideoPlayer";
 
-export default function ProjectClient() {
-  const params = useParams();
-  const id = params.id;
+type Project = {
+  id: string;
+  title: string;
+  description?: string;
+  status?: string;
+  video_url?: string | null;
+  duration?: number;
+};
 
-  const [project, setProject] = useState<any>(null);
+export default function Project({ params }: { params: { id: string } }) {
+  const projectId = params.id;
+
+  const [project, setProject] = useState<Project | null>(null);
+  const [refresh, setRefresh] = useState(0);
 
   useEffect(() => {
-    async function load() {
-      const { data } = await supabase.from("projects").select("*").eq("id", id).single();
-      setProject(data);
-    }
-    load();
-  }, [id]);
+    let mounted = true;
 
-  if (!project) return <p>Loading...</p>;
+    fetch(`${BACKEND_URL}/projects?user_id=11111111-1111-1111-1111-111111111111`)
+      .then((res) => res.json())
+      .then((data: Project[]) => {
+        if (!mounted) return;
+        const proj = data.find((d) => d.id === projectId) ?? null;
+        setProject(proj);
+      })
+      .catch(() => {
+        if (mounted) setProject(null);
+      });
+
+    return () => {
+      mounted = false;
+    };
+  }, [projectId, refresh]);
+
+  async function generateVideo() {
+    if (!project) return;
+
+    const form = new FormData();
+    form.append("project_id", projectId);
+    form.append("duration", String(project.duration ?? 10));
+
+    await fetch(`${BACKEND_URL}/generate_trailer`, {
+      method: "POST",
+      body: form,
+    });
+
+    // Wait a moment for backend / supabase update
+    setTimeout(() => setRefresh((r) => r + 1), 3000);
+  }
+
+  if (!project) return <div>Loading...</div>;
 
   return (
-    <div>
-      <h1 className="text-3xl font-bold">{project.title}</h1>
+    <>
+      <Navbar />
+
+      <h1 className="text-3xl font-bold mb-3">{project.title}</h1>
       <p>Status: {project.status}</p>
 
-      {project.video_url && (
+      {!project.video_url && (
         <>
-          <video src={project.video_url} controls className="mt-4 w-full rounded shadow" />
-          <a
-            className="mt-4 inline-block bg-black text-white px-4 py-2 rounded"
-            href={project.video_url}
-            download
-          >
-            Download Video
-          </a>
+          <ImageUpload projectId={projectId} onUploaded={() => setRefresh((r) => r + 1)} />
+          <DialogueInput projectId={projectId} onUploaded={() => setRefresh((r) => r + 1)} />
+
+          <button className="p-3 bg-blue-600 text-white" onClick={generateVideo}>
+            Generate AI Trailer
+          </button>
         </>
       )}
-    </div>
+
+      <VideoPlayer url={project.video_url ?? undefined} />
+    </>
   );
 }

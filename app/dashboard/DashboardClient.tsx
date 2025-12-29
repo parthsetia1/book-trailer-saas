@@ -1,42 +1,49 @@
 "use client";
 
-import { supabase } from "@/lib/supabaseClient";
 import { useEffect, useState } from "react";
-import Link from "next/link";
+import { BACKEND_URL } from "../../lib/config";
+import Navbar from "@/components/Navbar";
 
-export default function DashboardClient() {
-  
-  const [projects, setProjects] = useState<any[]>([]);
+type Project = {
+  id: string;
+  title: string;
+  description?: string;
+  status?: string;
+  video_url?: string | null;
+  duration?: number;
+};
+
+export default function Dashboard() {
+  const [projects, setProjects] = useState<Project[]>([]);
+
+  const USER_ID = "11111111-1111-1111-1111-111111111111"; // Static user (for demo)
 
   useEffect(() => {
-    async function load() {
-      const { data } = await supabase.from("projects").select("*").order("created_at", { ascending: false });
-      setProjects(data ?? []);
-    }
-    load();
+    fetch(`${BACKEND_URL}/projects?user_id=${USER_ID}`)
+      .then((res) => res.json())
+      .then((data: Project[]) => setProjects(data))
+      .catch(() => setProjects([]));
   }, []);
 
   return (
-    <div>
-      <h1 className="text-3xl font-bold">Your Projects</h1>
+    <>
+      <Navbar />
 
-      <Link href="/create" className="block mt-4 bg-black text-white px-4 py-2 rounded-md">
-        + New Project
-      </Link>
+      <h1 className="text-3xl font-bold mb-6">Your Projects</h1>
 
-      <div className="mt-6 grid grid-cols-1 gap-4">
+      <div className="grid gap-4">
         {projects.map((p) => (
-          <Link
-            key={p.id}
-            href={`/project/${p.id}`}
-            className="p-4 border rounded-lg shadow-sm bg-white"
-          >
-            <h2 className="text-xl font-semibold">{p.title}</h2>
-            <p className="text-gray-600">{p.description}</p>
-            <p>Status: {p.status}</p>
-          </Link>
+          <a key={p.id} href={`/project/${p.id}`}>
+            <div className="p-4 shadow bg-white rounded">
+              <h2 className="font-semibold text-xl">{p.title}</h2>
+              <p>Status: {p.status}</p>
+              {p.video_url && (
+                <p className="text-green-600 font-bold">Trailer Ready!</p>
+              )}
+            </div>
+          </a>
         ))}
       </div>
-    </div>
+    </>
   );
 }
