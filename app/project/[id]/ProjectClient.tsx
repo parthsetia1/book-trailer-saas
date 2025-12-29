@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { BACKEND_URL } from "../../../lib/config";
 import Navbar from "@/components/Navbar";
-import ImageUpload from "@/components/imageUpload";
+import ImageUpload from "@/components/ImageUpload";
 import DialogueInput from "@/components/DialogueInput";
 import VideoPlayer from "@/components/VideoPlayer";
 
