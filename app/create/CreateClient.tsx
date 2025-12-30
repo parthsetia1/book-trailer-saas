@@ -17,6 +17,8 @@ export default function CreateProject() {
     form.append("description", desc);
     form.append("duration", duration);
     form.append("user_id", USER_ID);
+    form.append("duration", String(parseInt(duration)));
+
 
     const res = await fetch(`${BACKEND_URL}/create_project`, {
       method: "POST",
