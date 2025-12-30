@@ -26,7 +26,8 @@ export default function CreateProject() {
     });
 
     const data = await res.json();
-    window.location.href = `/project/${data.project_id}`;
+    window.location.href = `/upload?project_id=${data.project_id}`;
+
   }
 
   return (
